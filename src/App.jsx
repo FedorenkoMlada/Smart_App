@@ -2,8 +2,8 @@ import React from 'react';
 import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 
 import './App.css';
-import { TaskList } from './pages/TaskList';
-import { DictionariesList } from './pages/DictionariesList'; // Подключаем наш новый экран
+import { DictionariesList } from './pages/DictionariesList';
+import { WordsPage } from './pages/WordsPage'; // Подключили нашу новую страницу
 
 const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
   if (process.env.NODE_ENV === 'development') {
@@ -12,7 +12,7 @@ const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
       initPhrase: `Запусти ${process.env.REACT_APP_SMARTAPP}`,
       getState,
       nativePanel: {
-        defaultText: 'ччччччч',
+        defaultText: '',
         screenshotMode: false,
         tabIndex: -1,
       },
@@ -28,59 +28,58 @@ export class App extends React.Component {
     console.log('constructor');
 
     this.state = {
-      // --- НАВИГАЦИЯ И ДАННЫЕ ---
-      currentScreen: 'home', // 'home' (словари), 'words' (список слов), 'test' (тест)
-      activeDictId: null,    // ID словаря, в который мы сейчас зашли
+      // --- НАВИГАЦИЯ ---
+      currentScreen: 'home',
+      activeDictId: null,
 
-      dictionaries:[
-        {
-          id: 'dict-1',
-          name: 'Английский язык',
-          words:[
-            { id: 'w-1', ru: 'яблоко', en: 'apple' },
-            { id: 'w-2', ru: 'кошка', en: 'cat' },
-          ],
-        },
-      ],
+      // --- БАЗА ДАННЫХ ---
+      dictionaries:[],
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
 
-    this.assistant.on('data', (event /*: any*/) => {
-      console.log(`assistant.on(data)`, event);
+    this.assistant.on('data', (event) => {
       if (event.type === 'character') {
-        console.log(`assistant.on(data): character: "${event?.character?.id}"`);
+        // ...
       } else if (event.type === 'insets') {
-        console.log(`assistant.on(data): insets`);
+        // ...
       } else {
         const { action } = event;
         this.dispatchAssistantAction(action);
       }
     });
 
-    this.assistant.on('start', (event) => {
-      let initialData = this.assistant.getInitialData();
-      console.log(`assistant.on(start)`, event, initialData);
-    });
-
+    this.assistant.on('start', (event) => { console.log(`assistant.on(start)`, event); });
     this.assistant.on('command', (event) => { console.log(`assistant.on(command)`, event); });
     this.assistant.on('error', (event) => { console.log(`assistant.on(error)`, event); });
     this.assistant.on('tts', (event) => { console.log(`assistant.on(tts)`, event); });
   }
 
-  componentDidMount() {
-    console.log('componentDidMount');
-  }
-
-  // Передача стейта ассистенту (пока оставляем базовой)
+  // --- ДАННЫЕ ДЛЯ ГОЛОСОВОГО АССИСТЕНТА ---
   getStateForAssistant() {
-    const state = {
+    return {
       item_selector: {
         items: [],
-        ignored_words:['добавить', 'удалить', 'очисти', 'всё', 'все', 'список'],
+        ignored_words:['добавить', 'удалить', 'тест'],
       },
     };
-    return state;
+  }
+
+  dispatchAssistantAction(action) {
+    if (action) {
+      switch (action.type) {
+        case 'add_word':
+          return this.add_word_from_voice(action.ru);
+        case 'start_test':
+          return this.start_test();
+        case 'check_answer':
+          // Эту логику мы допишем, когда сделаем Экран 3
+          console.log('Пользователь ответил:', action.answer);
+          return;
+        default:
+          return;
+      }
+    }
   }
 
   // --- МЕТОДЫ НАВИГАЦИИ ---
@@ -92,21 +91,24 @@ export class App extends React.Component {
     this.setState({ currentScreen: 'home', activeDictId: null });
   };
 
-  // --- МЕТОДЫ ДЛЯ СЛОВАРЕЙ ---
+  start_test = () => {
+    console.log('Запуск теста!');
+    this.setState({ currentScreen: 'test' });
+  };
+
+
+  // --- МЕТОДЫ УПРАВЛЕНИЯ СЛОВАРЯМИ ---
   add_dictionary = () => {
-    // Временно используем браузерный prompt для быстрого создания
-    const name = prompt('Введите название нового словаря:', 'Мой новый словарь');
+    const name = prompt('Введите название нового словаря:', 'Новый словарь');
     if (!name) return;
 
     const newDict = {
       id: Math.random().toString(36).substring(7),
       name: name,
-      words:[],
+      words: [],
     };
 
-    this.setState({
-      dictionaries: [...this.state.dictionaries, newDict],
-    });
+    this.setState({ dictionaries:[...this.state.dictionaries, newDict] });
   };
 
   delete_dictionary = (dictId) => {
@@ -116,38 +118,73 @@ export class App extends React.Component {
   };
 
 
-  // --- ОБРАБОТКА КОМАНД АССИСТЕНТА ---
-  dispatchAssistantAction(action) {
-    if (action) {
-      switch (action.type) {
-        case 'add_note':
-          return this.add_note(action);
-        case 'delete_note':
-          return this.delete_note(action);
-        case 'clear_all_notes':
-          return this.clear_all_notes();
-        default:
-          return;
-      }
-    }
-  }
+  // --- МЕТОДЫ УПРАВЛЕНИЯ СЛОВАМИ ---
+  // --- НОВАЯ ФУНКЦИЯ ДЛЯ УМНОГО ПЕРЕВОДА ---
+  add_word_from_voice = async (ruWord) => {
+    try {
+      // Идем в бесплатный переводчик в интернете
+      const response = await fetch(`https://api.mymemory.translated.net/get?q=${ruWord}&langpair=ru|en`);
+      const data = await response.json();
 
-  // Временные заглушки для старых методов, чтобы код не падал,
-  // пока мы не переделаем TaskList в WordList
-  add_note(action) { console.log('Слова добавляются пока через интерфейс'); }
-  done_note(action) { console.log('Слова выучены'); }
-  delete_note(action) { console.log('Удаление слова'); }
-  clear_all_notes() { console.log('Очистка слов'); }
-  _send_action_value(action_id, value) { /* ... */ }
-  play_done_note(id) { /* ... */ }
+      // Достаем английский перевод из ответа
+      let enWord = data.responseData.translatedText.toLowerCase();
+
+      // Добавляем готовую пару в наш словарь!
+      this.add_word_to_dict({ ru: ruWord, en: enWord });
+    } catch (error) {
+      console.error("Ошибка при переводе:", error);
+      // Если нет интернета, добавим хотя бы русское слово
+      this.add_word_to_dict({ ru: ruWord, en: "???" });
+    }
+  };
+  add_word_to_dict = (wordData) => {
+    this.setState((prevState) => ({
+      dictionaries: prevState.dictionaries.map((dict) => {
+        if (dict.id === prevState.activeDictId) {
+          return {
+            ...dict,
+            words:[...dict.words, { id: Math.random().toString(36).substring(7), ru: wordData.ru, en: wordData.en }]
+          };
+        }
+        return dict;
+      })
+    }));
+  };
+
+  delete_word_from_dict = (wordId) => {
+    this.setState((prevState) => ({
+      dictionaries: prevState.dictionaries.map((dict) => {
+        if (dict.id === prevState.activeDictId) {
+          return {
+            ...dict,
+            words: dict.words.filter((w) => w.id !== wordId)
+          };
+        }
+        return dict;
+      })
+    }));
+  };
+
+  edit_word_in_dict = (wordId, newRu, newEn) => {
+    this.setState((prevState) => ({
+      dictionaries: prevState.dictionaries.map((dict) => {
+        if (dict.id === prevState.activeDictId) {
+          return {
+            ...dict,
+            words: dict.words.map((w) =>
+              w.id === wordId ? { ...w, ru: newRu, en: newEn } : w
+            )
+          };
+        }
+        return dict;
+      })
+    }));
+  };
 
 
   // --- ГЛАВНЫЙ РЕНДЕР ---
   render() {
-    console.log('render');
     const { currentScreen, dictionaries, activeDictId } = this.state;
-
-    // Находим словарь, который сейчас открыт
     const activeDictionary = dictionaries.find((d) => d.id === activeDictId);
 
     return (
@@ -163,29 +200,30 @@ export class App extends React.Component {
           />
         )}
 
-        {/* ЭКРАН 2: ВНУТРИ СЛОВАРЯ (пока используем старый TaskList) */}
+        {/* ЭКРАН 2: ВНУТРИ СЛОВАРЯ (ГРУППЫ) */}
         {currentScreen === 'words' && activeDictionary && (
-          <div>
-            {/* Кнопка "Назад" к словарям */}
-            <div className="container" style={{ paddingBottom: '0' }}>
-              <button
-                onClick={this.go_home}
-                style={{ backgroundColor: 'transparent', color: '#00d2d3', border: '1px solid #00d2d3', padding: '10px 20px', borderRadius: '20px', cursor: 'pointer', marginBottom: '-20px' }}>
-                ← Назад к словарям
-              </button>
-            </div>
+          <WordsPage
+            activeItem={activeDictionary}
+            onBack={this.go_home}
+            onAddWord={this.add_word_to_dict}
+            onDeleteWord={this.delete_word_from_dict}
+            onEditWord={this.edit_word_in_dict}
+            onDeleteGroup={() => {
+              this.delete_dictionary(activeDictionary.id);
+              this.go_home();
+            }}
+            onStartTest={this.start_test}
+          />
+        )}
 
-            <TaskList
-              // Адаптируем наши слова под старый формат TaskList (title, completed)
-              items={activeDictionary.words.map(w => ({
-                id: w.id,
-                title: `${w.ru} — ${w.en}`,
-                completed: false
-              }))}
-              onAdd={(note) => {}}
-              onDone={(note) => {}}
-              onClearAll={() => {}}
-            />
+        {/* ЭКРАН 3: ТЕСТИРОВАНИЕ (пока заглушка) */}
+        {currentScreen === 'test' && (
+          <div className="container" style={{ textAlign: 'center', marginTop: '100px' }}>
+            <h2>Режим тестирования</h2>
+            <p>Здесь скоро будет проверка слов!</p>
+            <button onClick={this.go_home} className="add-task" style={{ width: 'auto', padding: '0 30px' }}>
+              Выйти
+            </button>
           </div>
         )}
 

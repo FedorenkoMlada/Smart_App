@@ -4,6 +4,7 @@ import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 import './App.css';
 import { DictionariesList } from './pages/DictionariesList';
 import { WordsPage } from './pages/WordsPage'; // Подключили нашу новую страницу
+import { TestPage } from './pages/TestPage'; //
 
 const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
   if (process.env.NODE_ENV === 'development') {
@@ -34,6 +35,8 @@ export class App extends React.Component {
 
       // --- БАЗА ДАННЫХ ---
       dictionaries:[],
+
+      lastVoiceAnswer: null,
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
@@ -73,8 +76,10 @@ export class App extends React.Component {
         case 'start_test':
           return this.start_test();
         case 'check_answer':
-          // Эту логику мы допишем, когда сделаем Экран 3
-          console.log('Пользователь ответил:', action.answer);
+          // Сохраняем ответ в state, чтобы TestPage его подхватил
+        this.setState({ lastVoiceAnswer: action.answer });
+        // Сбрасываем через мгновение, чтобы можно было обрабатывать одинаковые ответы подряд
+        setTimeout(() => this.setState({ lastVoiceAnswer: null }), 100);
           return;
         default:
           return;
@@ -217,14 +222,12 @@ export class App extends React.Component {
         )}
 
         {/* ЭКРАН 3: ТЕСТИРОВАНИЕ (пока заглушка) */}
-        {currentScreen === 'test' && (
-          <div className="container" style={{ textAlign: 'center', marginTop: '100px' }}>
-            <h2>Режим тестирования</h2>
-            <p>Здесь скоро будет проверка слов!</p>
-            <button onClick={this.go_home} className="add-task" style={{ width: 'auto', padding: '0 30px' }}>
-              Выйти
-            </button>
-          </div>
+        {currentScreen === 'test' && activeDictionary && (
+          <TestPage
+            words={activeDictionary.words}
+            onBack={this.go_home}
+            voiceAnswer={this.state.lastVoiceAnswer}
+          />
         )}
 
       </div>

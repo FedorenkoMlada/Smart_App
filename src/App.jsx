@@ -101,6 +101,10 @@ export class App extends React.Component {
     this.setState({ currentScreen: 'test' });
   };
 
+  go_back_to_words = () => {
+  this.setState({ currentScreen: 'words' });
+  };
+
 
   // МЕТОДЫ УПРАВЛЕНИЯ СЛОВАРЯМИ
   add_dictionary = () => {
@@ -225,7 +229,7 @@ export class App extends React.Component {
         {currentScreen === 'test' && activeDictionary && (
           <TestPage
             words={activeDictionary.words}
-            onBack={this.go_home}
+            onBack={this.go_back_to_words}
             voiceAnswer={this.state.lastVoiceAnswer}
           />
         )}

@@ -3,7 +3,6 @@ import "../App.css";
 
 export const WordCard = ({ wordPair, onDeleteWord, onEditWord }) => {
   const [isEditing, setIsEditing] = useState(false);
-
   const[ruText, setRuText] = useState(wordPair.ru);
   const [enText, setEnText] = useState(wordPair.en);
 
@@ -17,7 +16,6 @@ export const WordCard = ({ wordPair, onDeleteWord, onEditWord }) => {
     handleSave();
   };
 
-  // ЕСЛИ КАРТОЧКА В РЕЖИМЕ РЕДАКТИРОВАНИЯ:
   if (isEditing) {
     return (
       <li className="task-item" style={{ padding: '10px 20px' }}>
@@ -43,7 +41,6 @@ export const WordCard = ({ wordPair, onDeleteWord, onEditWord }) => {
             style={{ backgroundColor: '#00d2d3', color: '#1e1e2f', border: 'none', padding: '10px 15px', borderRadius: '10px', cursor: 'pointer', fontSize: '18px' }}
             title="Сохранить"
           >
-            {/* Иконка сохранения (галочка) */}
             <i className="bi bi-check-lg"></i>
           </button>
         </form>
@@ -51,7 +48,6 @@ export const WordCard = ({ wordPair, onDeleteWord, onEditWord }) => {
     );
   }
 
-  // ОБЫЧНЫЙ РЕЖИМ КАРТОЧКИ:
   return (
     <li className="task-item" style={{ display: 'flex', alignItems: 'center' }}>
       <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', paddingRight: '20px' }}>
@@ -67,7 +63,6 @@ export const WordCard = ({ wordPair, onDeleteWord, onEditWord }) => {
           onMouseEnter={(e) => e.target.style.color = '#00d2d3'}
           onMouseLeave={(e) => e.target.style.color = '#8e8eab'}
         >
-          {/* Твоя иконка редактирования */}
           <i className="bi bi-pencil-square" style={{ pointerEvents: 'none' }}></i>
         </button>
 
@@ -78,7 +73,6 @@ export const WordCard = ({ wordPair, onDeleteWord, onEditWord }) => {
           onMouseEnter={(e) => e.target.style.color = '#ff4757'}
           onMouseLeave={(e) => e.target.style.color = '#8e8eab'}
         >
-          {/* Твоя иконка удаления */}
           <i className="bi bi-trash3" style={{ pointerEvents: 'none' }}></i>
         </button>
       </div>

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 export const TestPage = ({ words, onBack, voiceAnswer }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
-  const [feedback, setFeedback] = useState(null); // 'correct', 'error', null
+  const [feedback, setFeedback] = useState(null);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 

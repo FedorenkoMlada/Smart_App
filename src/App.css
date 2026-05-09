@@ -1,6 +1,6 @@
 /* Базовые настройки страницы */
 body {
-  background-color: #1e1e2f; /* Приятный темный фон с синим оттенком */
+  background-color: #1e1e2f;
   color: #ffffff;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
@@ -11,30 +11,30 @@ body {
   padding: 0 20px;
 }
 
-/* Строка ввода (теперь выглядит как аккуратная карточка) */
+/* Строка ввода */
 .add-task {
   margin-top: 40px;
   width: 100%;
   height: 64px;
   padding: 0 24px;
   font-size: 20px;
-  border: 2px solid #3f3f5a; /* Легкая рамка */
+  border: 2px solid #3f3f5a;
   border-radius: 16px;
-  background-color: #2a2a40; /* Фон поля чуть светлее фона страницы */
+  background-color: #2a2a40;
   color: white;
   outline: none;
   transition: border-color 0.3s ease;
 }
 
 .add-task:focus {
-  border-color: #6c5ce7; /* Фиолетовый акцент при клике/наборе текста */
+  border-color: #6c5ce7;
 }
 
 .add-task::placeholder {
   color: #8e8eab;
 }
 
-/* Кнопка "Удалить все", которую мы добавляли ранее */
+/* Кнопка "Удалить все" */
 .clear-all-btn {
   width: 100%;
   margin-top: 16px;
@@ -64,30 +64,30 @@ body {
   list-style: none;
 }
 
-/* КАРТОЧКА СЛОВА (бывшая task-item) */
+/* КАРТОЧКА СЛОВА */
 .task-item {
   margin-bottom: 16px;
   padding: 20px 24px;
   background-color: #2a2a40;
-  border-left: 6px solid #00d2d3; /* Яркая бирюзовая полоска слева */
+  border-left: 6px solid #00d2d3;
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 22px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Легкая тень для объема */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .task-item:hover {
-  transform: translateY(-3px); /* Карточка "всплывает" при наведении мыши */
+  transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Чекбокс (галочка "слово выучено") */
+/* Чекбокс */
 .done-item {
   width: 28px;
   height: 28px;
   cursor: pointer;
-  accent-color: #00d2d3; /* Цвет галочки под цвет акцента карточки */
+  accent-color: #00d2d3;
 }

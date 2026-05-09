@@ -3,8 +3,8 @@ import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 
 import './App.css';
 import { DictionariesList } from './pages/DictionariesList';
-import { WordsPage } from './pages/WordsPage'; // Подключили нашу новую страницу
-import { TestPage } from './pages/TestPage'; //
+import { WordsPage } from './pages/WordsPage';
+import { TestPage } from './pages/TestPage';
 
 const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
   if (process.env.NODE_ENV === 'development') {
@@ -29,11 +29,11 @@ export class App extends React.Component {
     console.log('constructor');
 
     this.state = {
-      // --- НАВИГАЦИЯ ---
+      // НАВИГАЦИЯ
       currentScreen: 'home',
       activeDictId: null,
 
-      // --- БАЗА ДАННЫХ ---
+      // БАЗА ДАННЫХ
       dictionaries:[],
 
       lastVoiceAnswer: null,
@@ -58,7 +58,7 @@ export class App extends React.Component {
     this.assistant.on('tts', (event) => { console.log(`assistant.on(tts)`, event); });
   }
 
-  // --- ДАННЫЕ ДЛЯ ГОЛОСОВОГО АССИСТЕНТА ---
+  // ДАННЫЕ ДЛЯ ГОЛОСОВОГО АССИСТЕНТА
   getStateForAssistant() {
     return {
       item_selector: {
@@ -87,7 +87,7 @@ export class App extends React.Component {
     }
   }
 
-  // --- МЕТОДЫ НАВИГАЦИИ ---
+  // МЕТОДЫ НАВИГАЦИИ
   open_dictionary = (dictId) => {
     this.setState({ currentScreen: 'words', activeDictId: dictId });
   };
@@ -102,7 +102,7 @@ export class App extends React.Component {
   };
 
 
-  // --- МЕТОДЫ УПРАВЛЕНИЯ СЛОВАРЯМИ ---
+  // МЕТОДЫ УПРАВЛЕНИЯ СЛОВАРЯМИ
   add_dictionary = () => {
     const name = prompt('Введите название нового словаря:', 'Новый словарь');
     if (!name) return;
@@ -123,18 +123,18 @@ export class App extends React.Component {
   };
 
 
-  // --- МЕТОДЫ УПРАВЛЕНИЯ СЛОВАМИ ---
-  // --- НОВАЯ ФУНКЦИЯ ДЛЯ УМНОГО ПЕРЕВОДА ---
+  // МЕТОДЫ УПРАВЛЕНИЯ СЛОВАМИ
+  // ФУНКЦИЯ ДЛЯ УМНОГО ПЕРЕВОДА
   add_word_from_voice = async (ruWord) => {
     try {
-      // Идем в бесплатный переводчик в интернете
+      // Бесплатный переводчик в интернете
       const response = await fetch(`https://api.mymemory.translated.net/get?q=${ruWord}&langpair=ru|en`);
       const data = await response.json();
 
       // Достаем английский перевод из ответа
       let enWord = data.responseData.translatedText.toLowerCase();
 
-      // Добавляем готовую пару в наш словарь!
+      // Добавляем готовую пару в наш словарь
       this.add_word_to_dict({ ru: ruWord, en: enWord });
     } catch (error) {
       console.error("Ошибка при переводе:", error);
@@ -187,7 +187,7 @@ export class App extends React.Component {
   };
 
 
-  // --- ГЛАВНЫЙ РЕНДЕР ---
+  // ГЛАВНЫЙ РЕНДЕР
   render() {
     const { currentScreen, dictionaries, activeDictId } = this.state;
     const activeDictionary = dictionaries.find((d) => d.id === activeDictId);
@@ -221,7 +221,7 @@ export class App extends React.Component {
           />
         )}
 
-        {/* ЭКРАН 3: ТЕСТИРОВАНИЕ (пока заглушка) */}
+        {/* ЭКРАН 3: ТЕСТИРОВАНИЕ */}
         {currentScreen === 'test' && activeDictionary && (
           <TestPage
             words={activeDictionary.words}

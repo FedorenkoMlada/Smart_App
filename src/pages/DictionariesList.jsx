@@ -5,6 +5,17 @@ export const DictionariesList = ({ dictionaries, onOpen, onDelete, onAdd }) => {
   // Состояние для хранения словаря, который пользователь хочет удалить (для модального окна)
   const [dictToDelete, setDictToDelete] = useState(null);
 
+  // Состояние для текста в поле ввода
+  const [newDictName, setNewDictName] = useState('');
+
+  // Функция для обработки нажатия кнопки или Enter
+  const handleAddSubmit = (e) => {
+    e.preventDefault();
+    if (!newDictName.trim()) return;
+    onAdd(newDictName);
+    setNewDictName('');
+  };
+
 // Функции управления модальным окном
 
   const confirmDelete = (dict) => {
@@ -26,10 +37,34 @@ export const DictionariesList = ({ dictionaries, onOpen, onDelete, onAdd }) => {
       <h1 style={{ color: 'white', textAlign: 'center', marginBottom: '40px' }}>Мои словари</h1>
 
       {/* Кнопка добавления нового словаря */}
-      <button className="add-task" onClick={onAdd} style={{ cursor: 'pointer', marginBottom: '30px', textAlign: 'center' }}>
-        <i className="bi bi-journal-plus" style={{ marginRight: '10px' }}></i>
-        Создать новый словарь
-      </button>
+      <form onSubmit={handleAddSubmit} style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
+        <input
+          type="text"
+          placeholder="Название нового словаря..."
+          value={newDictName}
+          onChange={(e) => setNewDictName(e.target.value)}
+          className="add-task-input"
+          style={{
+            flex: 1,
+            margin: 0,
+            backgroundColor: '#1e1e2f',
+            color: 'white',
+            border: '1px solid #3d3d4e',
+            borderRadius: '12px',
+            padding: '12px 20px',
+            outline: 'none',
+            fontSize: '16px'
+          }}
+        />
+        <button
+          type="submit"
+          className="add-task"
+          style={{ width: 'auto', padding: '0 20px', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <i className="bi bi-journal-plus"></i>
+          Создать
+        </button>
+      </form>
 
       {/* Список существующих словарей */}
       <ul className="notes">
@@ -46,7 +81,8 @@ export const DictionariesList = ({ dictionaries, onOpen, onDelete, onAdd }) => {
             {/* Кнопка удаления конкретного словаря */}
             <button
               onClick={() => confirmDelete(dict)}
-              style={{ backgroundColor: '#ff4757', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}
+              className="delete-btn-simple"
+              style={{ background: 'transparent', color: '#ff4757', border: '1px solid #ff4757', padding: '5px 12px', borderRadius: '8px', cursor: 'pointer' }}
             >
               Удалить
             </button>
@@ -56,20 +92,27 @@ export const DictionariesList = ({ dictionaries, onOpen, onDelete, onAdd }) => {
 
       {/* Модальное окно подтверждения (появляется только при удалении) */}
       {dictToDelete && (
-        <div style={modalOverlayStyle}>
-          <div style={modalBoxStyle}>
-            <h2 style={{ color: 'black', marginTop: 0 }}>Удаление словаря</h2>
-            <p style={{ color: '#333' }}>
-              Вы уверены, что хотите удалить словарь <b>"{dictToDelete.name}"</b>?<br/>
-              Все слова внутри него будут потеряны!
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
-              <button onClick={cancelDelete} style={btnCancelStyle}>Отмена</button>
-              <button onClick={executeDelete} style={btnDeleteStyle}>Да, удалить</button>
+          <div style={modalOverlayStyle}>
+            <div style={modalBoxStyle}>
+              <h2 style={{ color: 'white', marginTop: 0, fontSize: '22px' }}>Удаление словаря</h2>
+
+              <p style={{ color: '#8e8eab', lineHeight: '1.5' }}>
+                Вы уверены, что хотите удалить словарь <b style={{ color: '#00d2d3' }}>"{dictToDelete.name}"</b>?
+                <br/>Все данные будут безвозвратно удалены.
+              </p>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '30px' }}>
+                <button onClick={cancelDelete} style={btnCancelStyle}>Отмена</button>
+                <button
+                  onClick={executeDelete}
+                  style={{ ...btnDeleteStyle, borderRadius: '10px' }}
+                >
+                  Да, удалить
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </main>
   );
 };
@@ -84,13 +127,23 @@ const modalOverlayStyle = {
 };
 
 const modalBoxStyle = {
-  backgroundColor: 'white', padding: '30px', borderRadius: '16px',
-  maxWidth: '400px', width: '90%', boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+  backgroundColor: '#1e1e2f',
+  padding: '30px',
+  borderRadius: '20px',
+  maxWidth: '400px',
+  width: '90%',
+  boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+  border: '1px solid #3d3d4e',
 };
 
 const btnCancelStyle = {
-  padding: '10px 20px', borderRadius: '8px', border: '1px solid #ccc',
-  backgroundColor: 'white', cursor: 'pointer', color: 'black'
+  padding: '10px 20px',
+  borderRadius: '10px',
+  border: '1px solid #4a4a6a',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+  color: '#8e8eab',
+  fontWeight: '500'
 };
 
 const btnDeleteStyle = {

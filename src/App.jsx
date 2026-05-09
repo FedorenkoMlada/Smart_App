@@ -73,6 +73,8 @@ export class App extends React.Component {
       switch (action.type) {
         case 'add_word':
           return this.add_word_from_voice(action.ru);
+        case 'create_dictionary':
+          return this.add_dictionary(action.name);
         case 'start_test':
           return this.start_test();
         case 'check_answer':
@@ -107,17 +109,17 @@ export class App extends React.Component {
 
 
   // МЕТОДЫ УПРАВЛЕНИЯ СЛОВАРЯМИ
-  add_dictionary = () => {
-    const name = prompt('Введите название нового словаря:', 'Новый словарь');
-    if (!name) return;
+  add_dictionary = (name) => {
+    // Если имя пустое (например, нажали добавить ничего не введя), ставим дефолтное
+    const finalName = name.trim() || 'Новый словарь';
 
     const newDict = {
       id: Math.random().toString(36).substring(7),
-      name: name,
+      name: finalName,
       words: [],
     };
 
-    this.setState({ dictionaries:[...this.state.dictionaries, newDict] });
+    this.setState({ dictionaries: [...this.state.dictionaries, newDict] });
   };
 
   delete_dictionary = (dictId) => {

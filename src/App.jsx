@@ -69,23 +69,59 @@ export class App extends React.Component {
   }
 
   dispatchAssistantAction(action) {
-    if (action) {
-      switch (action.type) {
+    if (!action) return;
+
+    const clean = (text) => text ? text.replace(/<[^>]*>/g, "").trim() : "";
+
+    switch (action.type) {
         case 'add_word':
-          return this.add_word_from_voice(action.ru);
+            const ru = clean(action.ru);
+            const en = clean(action.en);
+
+            if (en) {
+                // Если голос прислал и слово и перевод - добавляем сразу
+                this.add_word_to_dict({ ru, en });
+            } else {
+                // Если только русское - отправляем на перевод в API
+                this.add_word_from_voice(ru);
+            }
+            break;
+
         case 'create_dictionary':
-          return this.add_dictionary(action.name);
+            return this.add_dictionary(clean(action.name));
+
+        case 'delete_dictionary':
+            const dictToDel = this.state.dictionaries.find(d => d.name.toLowerCase() === clean(action.name).toLowerCase());
+            if (dictToDel) this.delete_dictionary(dictToDel.id);
+            break;
+
+        case 'delete_word':
+            const activeD = this.state.dictionaries.find(d => d.id === this.state.activeDictId);
+            const wordToDel = activeD?.words.find(w => w.ru.toLowerCase() === clean(action.ru).toLowerCase());
+            if (wordToDel) this.delete_word_from_dict(wordToDel.id);
+            break;
+
         case 'start_test':
-          return this.start_test();
+            return this.start_test();
+
         case 'check_answer':
-          // Сохраняем ответ в state, чтобы TestPage его подхватил
-        this.setState({ lastVoiceAnswer: action.answer });
-        // Сбрасываем через мгновение, чтобы можно было обрабатывать одинаковые ответы подряд
-        setTimeout(() => this.setState({ lastVoiceAnswer: null }), 100);
-          return;
+            this.setState({ lastVoiceAnswer: clean(action.answer) });
+            setTimeout(() => this.setState({ lastVoiceAnswer: null }), 100);
+            break;
+
+        case 'open_screen':
+            return this.setState({ currentScreen: action.screen });
+
+        case 'open_dictionary':
+            const foundDict = this.state.dictionaries.find(d => d.name.toLowerCase() === clean(action.name).toLowerCase());
+            if (foundDict) {
+                this.open_dictionary(foundDict.id);
+            } else {
+                this.assistant.sendText('Словарь с таким названием не найден');
+            }
+            break;
         default:
-          return;
-      }
+            console.log("Неизвестный экшен:", action.type);
     }
   }
 

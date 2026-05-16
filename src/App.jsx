@@ -37,6 +37,8 @@ export class App extends React.Component {
       dictionaries:[],
 
       lastVoiceAnswer: null,
+
+      testError: null,
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
@@ -71,7 +73,6 @@ export class App extends React.Component {
   dispatchAssistantAction(action) {
     if (!action) return;
 
-    // Очистка текста от возможных XML-тегов Сбера (важно для модерации!)
     const clean = (text) => text ? text.replace(/<[^>]*>/g, "").trim() : "";
 
     switch (action.type) {
@@ -140,18 +141,26 @@ export class App extends React.Component {
   };
 
   start_test = () => {
-    console.log('Запуск теста!');
-    this.setState({ currentScreen: 'test' });
-  };
+      const { dictionaries, activeDictId } = this.state;
+      const activeDictionary = dictionaries.find((d) => d.id === activeDictId);
 
-  go_back_to_words = () => {
-  this.setState({ currentScreen: 'words' });
+      if (!activeDictionary || !activeDictionary.words || activeDictionary.words.length === 0) {
+        this.setState({ testError: "Сначала добавьте хотя бы одно слово в словарь!" });
+
+        setTimeout(() => this.setState({ testError: null }), 3000);
+        return;
+      }
+
+      this.setState({ currentScreen: 'test', testError: null });
+      };
+
+      go_back_to_words = () => {
+      this.setState({ currentScreen: 'words' });
   };
 
 
   // МЕТОДЫ УПРАВЛЕНИЯ СЛОВАРЯМИ
   add_dictionary = (name) => {
-    // Если имя пустое (например, нажали добавить ничего не введя), ставим дефолтное
     const finalName = name.trim() || 'Новый словарь';
 
     const newDict = {
@@ -256,6 +265,7 @@ export class App extends React.Component {
         {currentScreen === 'words' && activeDictionary && (
           <WordsPage
             activeItem={activeDictionary}
+            testError={this.state.testError}
             onBack={this.go_home}
             onAddWord={this.add_word_to_dict}
             onDeleteWord={this.delete_word_from_dict}

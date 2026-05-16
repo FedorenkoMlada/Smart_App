@@ -38,7 +38,7 @@ export const TestPage = ({ words, onBack, voiceAnswer }) => {
     const userSays = answer.trim().toLowerCase();
     const correctAnswer = currentWord.ru.toLowerCase();
 
-    // Теперь проверяем русское слово! Сбер поймет его идеально.
+    // Теперь проверяем русское слово
     if (userSays === correctAnswer) {
       setFeedback('correct');
       setScore(score + 1);

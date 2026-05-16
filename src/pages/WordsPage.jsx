@@ -2,7 +2,7 @@ import React from 'react';
 import { AddWord } from '../components/AddWord';
 import { WordCard } from '../components/WordCard';
 
-export const WordsPage = ({ activeItem, onBack, onAddWord, onDeleteWord, onDeleteGroup, onStartTest, onEditWord }) => {
+export const WordsPage = ({ activeItem, onBack, onAddWord, onDeleteWord, onDeleteGroup, onStartTest, onEditWord, testError }) => {
   return (
     <main className="container">
 
@@ -30,6 +30,19 @@ export const WordsPage = ({ activeItem, onBack, onAddWord, onDeleteWord, onDelet
         style={{ width: '100%', backgroundColor: '#6c5ce7', color: 'white', border: 'none', padding: '15px', borderRadius: '16px', cursor: 'pointer', fontWeight: 'bold', fontSize: '18px', marginBottom: '10px' }}>
         Начать голосовой тест
       </button>
+
+      {testError && (
+          <p style={{
+            color: '#ff4757',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            marginBottom: '15px',
+            animation: 'fadeIn 0.3s'
+          }}>
+            <i className="bi bi-exclamation-circle" style={{ marginRight: '8px' }}></i>
+            {testError}
+          </p>
+      )}
 
       {/* Форма добавления слова */}
       <AddWord onAdd={onAddWord} />

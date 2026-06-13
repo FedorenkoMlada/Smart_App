@@ -139,28 +139,137 @@ h1 {
   margin-right: 16px;
 }
 
-/* Адаптив для телефонов */
+/* ═══════════════════════════════════════ */
+/* Форма добавления слова (AddWord.jsx)    */
+/* ═══════════════════════════════════════ */
+
+.add-word-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.add-word-input {
+  flex: 1;
+  height: 64px;
+  padding: 0 16px;
+  font-size: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  background: rgba(30, 30, 50, 0.6);
+  backdrop-filter: blur(10px);
+  color: white;
+  outline: none;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.add-word-input:focus {
+  border-color: #c084fc;
+  background: rgba(30, 30, 50, 0.9);
+  box-shadow: 0 0 20px rgba(192, 132, 252, 0.2);
+}
+
+.add-word-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.add-word-btn {
+  padding: 0 20px;
+  height: 64px;
+  border-radius: 16px;
+  border: none;
+  background-color: #00d2d3;
+  color: #1e1e2f;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add-word-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 210, 211, 0.4);
+}
+
+/* ═══════════════════════════════════════ */
+/* Форма создания словаря (DictionariesList.jsx) */
+/* ═══════════════════════════════════════ */
+
+.add-dict-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.add-dict-input {
+  flex: 1;
+  height: 56px;
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #1e1e2f;
+  color: white;
+  border: 1px solid #3d3d4e;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.add-dict-input:focus {
+  border-color: #c084fc;
+  box-shadow: 0 0 15px rgba(192, 132, 252, 0.15);
+}
+
+.add-dict-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.add-dict-btn {
+  height: 56px;
+  padding: 0 20px;
+  border-radius: 16px;
+  border: none;
+  background-color: #00d2d3;
+  color: #1e1e2f;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.add-dict-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 210, 211, 0.4);
+}
+
+/* ═══════════════════════════════════════ */
+/* Мобильная адаптация (< 550px)           */
+/* ═══════════════════════════════════════ */
+
 @media (max-width: 550px) {
-  body {
-    padding: 20px 0;
+  .add-word-form,
+  .add-dict-form {
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .container {
-    padding: 0 16px;
-  }
-
-  .task-item {
-    padding: 14px 18px;
-    font-size: 18px;
-  }
-
-  .add-task {
+  .add-word-input,
+  .add-dict-input {
+    width: 100%;
     height: 56px;
     font-size: 16px;
   }
 
-  h1 {
-    font-size: 1.8rem;
-    margin-bottom: 24px;
+  .add-word-btn,
+  .add-dict-btn {
+    width: 100%;
+    height: 56px;
+    justify-content: center;
   }
 }

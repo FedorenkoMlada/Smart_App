@@ -15,13 +15,9 @@ export const AddWord = ({ onAdd }) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ display: 'flex', gap: '10px', marginTop: '20px', marginBottom: '30px' }}
-    >
+        <form onSubmit={handleSubmit} className="add-word-form">
       <input
-        className="add-task"
-        style={{ marginTop: 0, flex: 1, fontSize: '18px', padding: '0 16px' }}
+        className="add-word-input"
         type="text"
         placeholder="Русское слово"
         value={ruWord}
@@ -29,21 +25,14 @@ export const AddWord = ({ onAdd }) => {
         required
       />
       <input
-        className="add-task"
-        style={{ marginTop: 0, flex: 1, fontSize: '18px', padding: '0 16px' }}
+        className="add-word-input"
         type="text"
         placeholder="Перевод (English)"
         value={enWord}
         onChange={(e) => setEnWord(e.target.value)}
         required
       />
-      <button
-        type="submit"
-        style={{
-          padding: '0 20px', borderRadius: '16px', border: 'none',
-          backgroundColor: '#00d2d3', color: '#1e1e2f', fontWeight: 'bold', cursor: 'pointer'
-        }}
-      >
+      <button type="submit" className="add-word-btn">
         Добавить
       </button>
     </form>

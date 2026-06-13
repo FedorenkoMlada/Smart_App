@@ -37,30 +37,15 @@ export const DictionariesList = ({ dictionaries, onOpen, onDelete, onAdd }) => {
       <h1 style={{ color: 'white', textAlign: 'center', marginBottom: '40px' }}>Мои словари</h1>
 
       {/* Кнопка добавления нового словаря */}
-      <form onSubmit={handleAddSubmit} style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
+            <form onSubmit={handleAddSubmit} className="add-dict-form">
         <input
           type="text"
           placeholder="Название нового словаря..."
           value={newDictName}
           onChange={(e) => setNewDictName(e.target.value)}
-          className="add-task-input"
-          style={{
-            flex: 1,
-            margin: 0,
-            backgroundColor: '#1e1e2f',
-            color: 'white',
-            border: '1px solid #3d3d4e',
-            borderRadius: '12px',
-            padding: '12px 20px',
-            outline: 'none',
-            fontSize: '16px'
-          }}
+          className="add-dict-input"
         />
-        <button
-          type="submit"
-          className="add-task"
-          style={{ width: 'auto', padding: '0 20px', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}
-        >
+        <button type="submit" className="add-dict-btn">
           <i className="bi bi-journal-plus"></i>
           Создать
         </button>

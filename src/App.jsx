@@ -39,6 +39,8 @@ export class App extends React.Component {
       lastVoiceAnswer: null,
 
       testError: null,
+
+      userId: null,
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
@@ -54,10 +56,47 @@ export class App extends React.Component {
       }
     });
 
-    this.assistant.on('start', (event) => { console.log(`assistant.on(start)`, event); });
+    this.assistant.on('start', (event) => {
+      console.log(`assistant.on(start)`, event);
+
+      const rawRequest = event?.initialData?.rawRequest || event?.rawRequest || {};
+      const userId = rawRequest.uuid || rawRequest.sub || 'dev_user';
+
+      console.log('🆔 User ID:', userId);
+      this.loadUserData(userId);
+    });
+
     this.assistant.on('command', (event) => { console.log(`assistant.on(command)`, event); });
     this.assistant.on('error', (event) => { console.log(`assistant.on(error)`, event); });
     this.assistant.on('tts', (event) => { console.log(`assistant.on(tts)`, event); });
+  }
+
+  loadUserData = (userId) => {
+    try {
+      const saved = localStorage.getItem(`echo_dicts_${userId}`);
+      const dictionaries = saved ? JSON.parse(saved) : [];
+      this.setState({ userId, dictionaries });
+      console.log('📦 Загружено словарей:', dictionaries.length);
+    } catch (e) {
+      console.error('Ошибка загрузки данных:', e);
+      this.setState({ userId });
+    }
+  };
+
+  saveUserData = () => {
+    if (this.state.userId) {
+      localStorage.setItem(
+        `echo_dicts_${this.state.userId}`,
+        JSON.stringify(this.state.dictionaries)
+      );
+    }
+  };
+
+  // Автосохранение при любом изменении словарей
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.dictionaries !== this.state.dictionaries) {
+      this.saveUserData();
+    }
   }
 
   // ДАННЫЕ ДЛЯ ГОЛОСОВОГО АССИСТЕНТА
